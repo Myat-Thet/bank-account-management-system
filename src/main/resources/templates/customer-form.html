@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/master}">
+
+<head>
+<title>Customer Form</title>
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+
+		<h1>Customer Form</h1>
+
+		<form
+			th:action="${customer.id == null}
+        ? @{/customer/save}
+        : @{/customer/update/{id}(id=${customer.id})}"
+			th:object="${customer}" method="post">
+
+			<label>Name</label> <input type="text" th:field="*{name}" required>
+
+			<button type="submit">
+
+				<span
+					th:text="${customer.id == null}
+            ? 'Save Customer'
+            : 'Update Customer'">
+				</span>
+
+			</button>
+
+		</form>
+
+
+	</div>
+
+</body>
+
+</html>

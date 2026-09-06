@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/master}">
+
+<head>
+
+<title>Accounts</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6f9;
+        color: #222;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1250px;
+        margin: 40px auto;
+    }
+
+    /* Page Header */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .page-header p {
+        margin: 6px 0 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+
+    /* Card */
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+        margin-bottom: 30px;
+    }
+
+
+    /* Table */
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    thead {
+        background: #f7f8fa;
+    }
+
+    th {
+        text-align: left;
+        padding: 15px;
+        font-size: 13px;
+        color: #666;
+        text-transform: uppercase;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+        padding: 16px 15px;
+        border-bottom: 1px solid #eeeeee;
+        vertical-align: middle;
+    }
+
+    tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .account-number {
+        font-weight: bold;
+    }
+
+    .balance {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+
+    /* Links */
+
+    .action-link {
+        text-decoration: none;
+        font-size: 13px;
+        margin-right: 8px;
+        font-weight: 600;
+    }
+
+    .view-link {
+        color: #2563eb;
+    }
+
+    .edit-link {
+        color: #7c3aed;
+    }
+
+
+    /* Inline Forms */
+
+    .action-form {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-right: 6px;
+    }
+
+    .amount-input {
+        width: 100px;
+        padding: 8px 9px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+        font-size: 13px;
+    }
+
+    .amount-input:focus {
+        border-color: #2563eb;
+    }
+
+
+    /* Buttons */
+
+    button {
+        border: none;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .deposit-btn {
+        background: #16a34a;
+        color: white;
+    }
+
+    .withdraw-btn {
+        background: #dc2626;
+        color: white;
+    }
+
+    .transfer-btn {
+        background: #2563eb;
+        color: white;
+        padding: 11px 22px;
+        font-size: 14px;
+    }
+
+
+    /* Transfer */
+
+    .transfer-card {
+        max-width: 650px;
+    }
+
+    .transfer-card h2 {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+
+    .transfer-description {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    select,
+    .transfer-input {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        background: white;
+        font-size: 14px;
+        outline: none;
+    }
+
+    select:focus,
+    .transfer-input:focus {
+        border-color: #2563eb;
+    }
+
+
+    /* Divider */
+
+    .section-title {
+        margin: 0 0 20px;
+        font-size: 20px;
+    }
+
+
+    /* Responsive */
+
+    @media (max-width: 768px) {
+
+        .container {
+            width: 95%;
+            margin: 20px auto;
+        }
+
+        .card {
+            padding: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+        }
+
+        .action-form {
+            margin-bottom: 5px;
+        }
+
+        .transfer-card {
+            max-width: 100%;
+        }
+
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<div layout:fragment="content">
+
+<div class="container">
+
+    <!-- Page Header -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Account Management</h1>
+
+            <p>Manage accounts, deposits, withdrawals and transfers.</p>
+
+        </div>
+
+    </div>
+
+
+    <!-- Account List -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            Account List
+        </h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Account Number</th>
+
+                    <th>Balance</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:each="account : ${accounts}">
+
+                    <td th:text="${account.id}">
+                    </td>
+
+
+                    <td class="account-number"
+                        th:text="${account.accountNumber}">
+                    </td>
+
+
+                    <td class="balance"
+                        th:text="${account.balance}">
+                    </td>
+
+
+                    <td>
+
+                        <!-- View -->
+
+                        <a class="action-link view-link"
+                           th:href="@{/account/view/{id}(id=${account.id})}">
+
+                            View
+
+                        </a>
+
+
+                        <!-- Edit -->
+
+                        <a class="action-link edit-link"
+                           th:href="@{/account/update/{id}(id=${account.id})}">
+
+                            Edit
+
+                        </a>
+
+
+                        <!-- Deposit -->
+
+                        <form class="action-form"
+                              th:action="@{/account/{id}/deposit(id=${account.id})}"
+                              method="post">
+
+                            <input class="amount-input"
+                                   type="number"
+                                   name="balance"
+                                   placeholder="Amount"
+                                   min="1"
+                                   required>
+
+                            <button class="deposit-btn"
+                                    type="submit">
+
+                                Deposit
+
+                            </button>
+
+                        </form>
+
+
+                        <!-- Withdraw -->
+
+                        <form class="action-form"
+                              th:action="@{/account/{id}/withdraw(id=${account.id})}"
+                              method="post">
+
+                            <input class="amount-input"
+                                   type="number"
+                                   name="balance"
+                                   placeholder="Amount"
+                                   min="1"
+                                   required>
+
+                            <button class="withdraw-btn"
+                                    type="submit">
+
+                                Withdraw
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Transfer -->
+
+    <div class="card transfer-card">
+
+        <h2>Transfer Money</h2>
+
+        <p class="transfer-description">
+            Transfer money from one account to another account.
+        </p>
+
+
+        <form th:action="@{/account/transfer}"
+              method="post">
+
+
+            <!-- From Account -->
+
+            <div class="form-group">
+
+                <label for="fromId">
+                    From Account
+                </label>
+
+                <select id="fromId"
+                        name="fromId"
+                        required>
+
+                    <option value="">
+                        -- Select Account --
+                    </option>
+
+                    <option th:each="acc : ${accounts}"
+                            th:value="${acc.id}"
+                            th:text="${acc.accountNumber}">
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- To Account -->
+
+            <div class="form-group">
+
+                <label for="toId">
+                    To Account
+                </label>
+
+                <select id="toId"
+                        name="toId"
+                        required>
+
+                    <option value="">
+                        -- Select Account --
+                    </option>
+
+                    <option th:each="acc : ${accounts}"
+                            th:value="${acc.id}"
+                            th:text="${acc.accountNumber}">
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Amount -->
+
+            <div class="form-group">
+
+                <label for="balance">
+                    Transfer Amount
+                </label>
+
+                <input class="transfer-input"
+                       id="balance"
+                       type="number"
+                       name="balance"
+                       min="1"
+                       placeholder="Enter amount"
+                       required>
+
+            </div>
+
+
+            <button class="transfer-btn"
+                    type="submit">
+
+                Transfer Money
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+</body>
+
+</html>

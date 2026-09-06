@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/master}">
+
+<head>
+<title>Customers</title>
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+
+		<h1>Customer List</h1>
+
+		<a class="btn" th:href="@{/customer}"> Add Customer </a> <br> <br>
+
+		<table>
+
+			<thead>
+
+				<tr>
+
+					<th>ID</th>
+
+					<th>Name</th>
+
+					<th>Action</th>
+
+				</tr>
+
+			</thead>
+
+			<tbody>
+
+				<tr th:each="customer : ${customers}">
+
+					<td th:text="${customer.id}"></td>
+
+					<td th:text="${customer.name}"></td>
+
+					<td><a
+						th:href="@{/customer/update/{id}
+                    (id=${customer.id})}">
+
+							Edit </a>
+
+
+						<form
+							th:action="@{/customer/delete/{id}
+                    (id=${customer.id})}"
+							method="post" style="display: inline">
+
+							<button type="submit">Delete</button>
+
+						</form></td>
+
+				</tr>
+
+			</tbody>
+
+		</table>
+
+
+	</div>
+
+</body>
+
+</html>
